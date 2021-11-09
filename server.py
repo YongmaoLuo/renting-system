@@ -50,7 +50,7 @@ engine.execute("""CREATE TABLE IF NOT EXISTS test (
   id serial,
   name text
 );""")
-engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
+# engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
 
 
 @app.before_request
@@ -167,11 +167,38 @@ def another():
   return render_template("another.html")
 
 
+@app.route("/top-min-chart")
+def top_min_chart():
+    cursor = g.conn.execute("SELECT zip_code, avg(CAST(evaluation_price_per_sqft as decimal(9,2))) "
+                            "FROM address, building where address.street = building.street "
+                            "group by zip_code order by avg(CAST(evaluation_price_per_sqft as decimal(9,2))) LIMIT 6")
+    zip_codes, prices = [], []
+    for result in cursor:
+        zip_codes.append(result[0])  # can also be accessed using result[0]
+        prices.append(result[1])
+    cursor.close()
+
+    return render_template("top_min_chart.html", zipcode=zip_codes, price=prices)
+
+@app.route("/top-max-chart")
+def top_max_chart():
+    cursor = g.conn.execute("SELECT zip_code, avg(CAST(evaluation_price_per_sqft as decimal(9,2))) "
+                            "FROM address, building where address.street = building.street "
+                            "group by zip_code order by avg(CAST(evaluation_price_per_sqft as decimal(9,2))) DESC LIMIT 6")
+    zip_codes, prices = [], []
+    for result in cursor:
+        zip_codes.append(result[0])  # can also be accessed using result[0]
+        prices.append(result[1])
+    cursor.close()
+
+    return render_template("top_max_chart.html", zipcode=zip_codes, price=prices)
+
+
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
 def add():
   name = request.form['name']
-  g.conn.execute('INSERT INTO test VALUES (NULL, ?)', name)
+  g.conn.execute('INSERT INTO test VALUES (@0)', name)
   return redirect('/')
 
 
