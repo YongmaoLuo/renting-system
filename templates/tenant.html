@@ -26,13 +26,17 @@
   <h2>Unpaid Bills</h2>
   <div>{{ paymentReturn }}</div>
   <form method="POST" action="/pay">
+      <div name="userSSN" value="{{ userinfo }}"></div>
+
       <select name="unpaid">
         {% for n in upinfo %}
         <option value="{{ n }}">{{n,upinfo[n]}}</option>
         {% endfor %}
       </select>
 
-      <p>Pay a selected unpaid bill: <input type="submit" value="Pay"></p>
+        {% if upinfo|length!=0 %}
+            <p>Pay a selected unpaid bill: <input type="submit" value="Pay"></p>
+        {% endif %}
   </form>
 
   <h2>Paid Bills</h2>
