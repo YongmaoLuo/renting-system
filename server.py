@@ -50,9 +50,6 @@ engine.execute("""CREATE TABLE IF NOT EXISTS test (
 );""")
 
 
-# engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
-
-
 @app.before_request
 def before_request():
     """
@@ -96,7 +93,7 @@ def teardown_request(exception):
 # see for routing: http://flask.pocoo.org/docs/0.10/quickstart/#routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
-@app.route('/index')
+@app.route('/')
 def index():
     """
   request is a special object that Flask provides to access web request information:
@@ -195,32 +192,6 @@ def top_max_chart():
 
     return render_template("top_max_chart.html", zipcode=zip_codes, price=prices)
 
-@app.route('/agency')
-def agency():
-  """
-  request is a special object that Flask provides to access web request information:
-
-  request.method:   "GET" or "POST"
-  request.form:     if the browser submitted a form, this contains the data in the form
-  request.args:     dictionary of URL arguments, e.g., {a:1, b:2} for http://localhost?a=1&b=2
-
-  See its API: http://flask.pocoo.org/docs/0.10/api/#incoming-request-data
-  """
-
-  # DEBUG: this is debugging code to see what request looks like
-  # print(request.args)
-
-
-  #
-  # example of a database query
-  #
-  cursor = g.conn.execute("SELECT name FROM test")
-  names = []
-  for result in cursor:
-    names.append(result['name'])  # can also be accessed using result[0]
-  cursor.close()
-
-
 # Login
 @app.route('/checkUser', methods=['POST'])
 def login():
@@ -266,7 +237,7 @@ def initializePayment():
         ssn = result[0]
 
     # check validity
-    if year.isdigit() == false or month.isdigit() == false or amount.isdigit() == false:
+    if year.isdigit() == False or month.isdigit() == False or amount.isdigit() == False:
         return redirect('/Landlord/' + ssn)
 
     if int(month) < 1 or int(month) > 12 or int(amount) <= 0:
@@ -287,6 +258,17 @@ def initializePayment():
     g.conn.execute(statement,{"bill_id":bill_id,"amount":amount,"date":date,"ssn":ssn,"payfrom":payfrom})
 
     return redirect('/Landlord/' + ssn)
+
+
+@app.route('/draft', methods=['POST'])
+def draftContract():
+    tenant = request.form['tenant']
+    landlord = request.form['landlord']
+    be_block_lot = request.form['be_block_lot']
+    unit = request.form['unit']
+
+    if unit.isdigit() == False:
+        return redirect('/Agency/' + ssn)
 
 
 @app.route('/<identity>/<ssn>')
@@ -331,7 +313,12 @@ def users(identity, ssn):
         return render_template("landlord.html", userinfo=user_info, contractinfo=contracts,
                                upinfo=upBill, paidinfo=paidBill)
     else:
-        return render_template("agency.html", userinfo=user_info)
+        contracts = {}
+        cursor = g.conn.execute("SELECT contract_id, bo_block_lot,unit FROM contract "
+                                "WHERE draft_agency='" + str(ssn) + "'")
+        for result in cursor:
+            contracts[result[0]] = [result[1], result[2]]
+        return render_template("agency.html", userinfo=user_info, contractinfo=contracts)
     # design a html template
     # click the login button, access the database to see if the user is exist
     # return information
