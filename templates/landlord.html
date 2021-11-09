@@ -23,10 +23,12 @@
     <option value="{{ n }}">{{n,contractinfo[n]}}</option>
     {% endfor %}
   </select>
+    {% if contractinfo|length!=0 %}
     <p>year: <input type="text" name="year"></p>
     <p>month: <input type="text" name="month"></p>
     <p>amount: <input type="text" name="amount"></p>
     <p>Initialize a bill: <input type="submit" value="Initialize"></p>
+    {% endif %}
     </form>
 
   <h2>Unpaid Bills</h2>
