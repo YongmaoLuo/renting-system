@@ -203,11 +203,11 @@ def login():
     identity = request.form['identity']
 
     if identity == "Tenant":
-        cursor = g.conn.execute('SELECT ssn FROM tenant')
+        cursor = g.conn.execute(text('SELECT ssn FROM tenant WHERE tenant.ssn=:ssn'),ssn=ssn)
     elif identity == "Landlord":
-        cursor = g.conn.execute('SELECT ssn FROM landlord')
+        cursor = g.conn.execute(text('SELECT ssn FROM landlord WHERE landlord.ssn=:ssn'),ssn=ssn)
     else:
-        cursor = g.conn.execute('SELECT ssn FROM agency')
+        cursor = g.conn.execute(text('SELECT ssn FROM agency WHERE agency.ssn=:ssn'),ssn=ssn)
 
     for result in cursor:
         if result[0] == ssn:
@@ -219,12 +219,12 @@ def login():
 @app.route('/pay', methods=['POST'])
 def makePayment():
     bill_id = request.form['unpaid']
-    cursor = g.conn.execute("SELECT pay_from,paid FROM bill "
-                            "WHERE bill.bill_id='" + str(bill_id) + "'")
+    cursor = g.conn.execute(text("SELECT pay_from,paid FROM bill "
+                            "WHERE bill.bill_id=:bill_id"),bill_id=bill_id)
     for result in cursor:
         # update information about bill payment
-        g.conn.execute("UPDATE bill SET paid=true "
-                       "WHERE bill_id='" + str(bill_id) + "'")
+        g.conn.execute(text("UPDATE bill SET paid=true "
+                       "WHERE bill_id=:bill_id"),bill_id=bill_id)
         return redirect('/Tenant/' + result[0])
 
 
@@ -235,8 +235,9 @@ def initializePayment():
     amount = request.form['amount']
     contract_id = request.form['contract']
 
-    cursor = g.conn.execute("SELECT sign_by_landlord FROM contract "
-                            "WHERE contract.contract_id='" + str(contract_id) + "'")
+    cursor = g.conn.execute(text("SELECT sign_by_landlord FROM contract "
+                            "WHERE contract.contract_id=:contract_id"),
+                            contract_id=contract_id)
     for result in cursor:
         ssn = result[0]
 
@@ -251,8 +252,9 @@ def initializePayment():
     cursor=g.conn.execute("SELECT COUNT(*) FROM bill")
     for result in cursor:
         numberOfBills=result[0]
-    cursor = g.conn.execute("SELECT sign_by_tenant FROM contract"
-                            " WHERE contract.contract_id="+"'"+contract_id+"'")
+    cursor = g.conn.execute(text("SELECT sign_by_tenant FROM contract"
+                            " WHERE contract.contract_id=:contract_id"),
+                            contract_id=contract_id)
     for result in cursor:
         payfrom=result[0]
 
@@ -273,16 +275,16 @@ def users(identity, ssn):
         contracts = {}
         upBill = {}
         paidBill = {}
-        cursor = g.conn.execute("SELECT contract_id, bo_block_lot,unit FROM contract "
-                                "WHERE contract.sign_by_tenant='" + str(ssn) + "'")
+        cursor = g.conn.execute(text("SELECT contract_id, bo_block_lot,unit FROM contract "
+                                "WHERE contract.sign_by_tenant=:ssn"),ssn=ssn)
         for result in cursor:
             contracts[result[0]] = [result[1], result[2]]
-        cursor = g.conn.execute("SELECT bill_id, amount,bill_date,pay_to FROM bill "
-                                "WHERE bill.pay_from='" + str(ssn) + "'AND bill.paid=false")
+        cursor = g.conn.execute(text("SELECT bill_id, amount,bill_date,pay_to FROM bill "
+                                "WHERE bill.pay_from=:ssn AND bill.paid=false"),ssn=ssn)
         for result in cursor:
             upBill[result[0]] = ['$' + str(result[1]), str(result[2]), "Landlord: " + str(result[3])]
-        cursor = g.conn.execute("SELECT bill_id, amount,bill_date,pay_to FROM bill "
-                                "WHERE bill.pay_from='" + str(ssn) + "'AND bill.paid=true")
+        cursor = g.conn.execute(text("SELECT bill_id, amount,bill_date,pay_to FROM bill "
+                                "WHERE bill.pay_from=:ssn AND bill.paid=true"),ssn=ssn)
         for result in cursor:
             paidBill[result[0]] = ['$' + str(result[1]), str(result[2]), "Landlord: " + str(result[3])]
         return render_template("tenant.html", userinfo=user_info, contractinfo=contracts,
@@ -291,16 +293,16 @@ def users(identity, ssn):
         contracts = {}
         upBill = {}
         paidBill = {}
-        cursor = g.conn.execute("SELECT contract_id, bo_block_lot,unit FROM contract "
-                                "WHERE contract.sign_by_landlord='" + str(ssn) + "'")
+        cursor = g.conn.execute(text("SELECT contract_id, bo_block_lot,unit FROM contract "
+                                "WHERE contract.sign_by_landlord=:ssn"),ssn=ssn)
         for result in cursor:
             contracts[result[0]] = [result[1], result[2]]
-        cursor = g.conn.execute("SELECT bill_id, amount,bill_date,pay_from FROM bill "
-                                "WHERE bill.pay_to='" + str(ssn) + "'AND bill.paid=false")
+        cursor = g.conn.execute(text("SELECT bill_id, amount,bill_date,pay_from FROM bill "
+                                "WHERE bill.pay_to=:ssn AND bill.paid=false"),ssn=ssn)
         for result in cursor:
             upBill[result[0]] = ['$' + str(result[1]), str(result[2]), "Tenant: " + str(result[3])]
-        cursor = g.conn.execute("SELECT bill_id, amount,bill_date,pay_from FROM bill "
-                                "WHERE bill.pay_to='" + str(ssn) + "'AND bill.paid=true")
+        cursor = g.conn.execute(text("SELECT bill_id, amount,bill_date,pay_from FROM bill "
+                                "WHERE bill.pay_to=:ssn AND bill.paid=true"),ssn=ssn)
         for result in cursor:
             paidBill[result[0]] = ['$' + str(result[1]), str(result[2]), "Tenant: " + str(result[3])]
         return render_template("landlord.html", userinfo=user_info, contractinfo=contracts,

@@ -29,7 +29,6 @@
       <div name="userSSN" value="{{ userinfo }}"></div>
 
       <select name="unpaid">
-          <option value="{{ userinfo[0] }}"></option>
         {% for n in upinfo %}
         <option value="{{ n }}">{{n,upinfo[n]}}</option>
         {% endfor %}
