@@ -1,0 +1,50 @@
+<html>
+  <style>
+    body{
+      font-size: 15pt;
+      font-family: arial;
+    }
+  </style>
+
+
+<body>
+  <h1>Landlord</h1>
+
+  <div>
+    {% for n in userinfo %}
+    <div>{{n}}</div>
+    {% endfor %}
+  </div>
+
+    <form method="POST" action="/initialize">
+    <h2>Contracts</h2>
+  <select name="contract">
+    {% for n in contractinfo %}
+    <option value="{{ n }}">{{n,contractinfo[n]}}</option>
+    {% endfor %}
+  </select>
+    <p>year: <input type="text" name="year"></p>
+    <p>month: <input type="text" name="month"></p>
+    <p>amount: <input type="text" name="amount"></p>
+    <p>Initialize a bill: <input type="submit" value="Initialize"></p>
+    </form>
+
+  <h2>Unpaid Bills</h2>
+      <select name="unpaid">
+        {% for n in upinfo %}
+        <option value="{{ n }}">{{n,upinfo[n]}}</option>
+        {% endfor %}
+      </select>
+
+
+  <h2>Paid Bills</h2>
+    <select name="contract">
+        {% for n in paidinfo %}
+        <option>{{n,paidinfo[n]}}</option>
+        {% endfor %}
+    </select>
+
+</body>
+
+
+</html>
