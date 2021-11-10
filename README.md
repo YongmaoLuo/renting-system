@@ -5,6 +5,7 @@ zw2771
 
 
 ## URL of the Web Application
+http://34.138.154.131:8111
 
 
 ## Description of Application
