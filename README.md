@@ -74,5 +74,6 @@ buttton, this input will lead to the SQL Operation
 to mark this specific bill as "paid". This is interesting
 becasue it involves searching and marking procedures
 together.
+
 ![img.png](pictures/tenant_unpaid.png)
 
