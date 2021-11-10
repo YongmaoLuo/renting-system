@@ -15,6 +15,7 @@ Read about it online.
 """
 
 import os
+import random
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
@@ -266,11 +267,45 @@ def initializePayment():
 def draftContract():
     tenant = request.form['tenant']
     landlord = request.form['landlord']
-    be_block_lot = request.form['be_block_lot']
-    unit = request.form['unit']
+    contract_id = request.form['contract']
 
-    if unit.isdigit() == False:
+    cursor = g.conn.execute(text("SELECT draft_agency FROM contract "
+                                 "WHERE contract.contract_id=:contract_id"),
+                            contract_id=contract_id)
+    for result in cursor:
+        ssn = result[0]
+
+    tenants, landlords, bbl = [], [], []
+    cursor = g.conn.execute("SELECT ssn FROM tenant")
+    for r in cursor:
+        tenants.append(r)
+
+    cursor = g.conn.execute("SELECT ssn FROM landlord")
+    for r in cursor:
+        landlords.append(r)
+
+    cursor = g.conn.execute("SELECT bo_block_lot FROM building")
+    for r in cursor:
+        bbl.append(r)
+
+    tenants = ['010-22-3333', '010-22-3334', '010-22-3335', '010-22-3336', '010-22-3337', '010-22-3338', "010-22-3339",
+               "010-22-3340", '010-22-3341', '010-22-3342']
+
+    landlords = ['010-22-4333', '010-22-4334', '010-22-4335', '010-22-4336', '010-22-4337']
+
+    if tenant not in tenants or landlord not in landlords:
         return redirect('/Agency/' + ssn)
+
+    cursor = g.conn.execute("SELECT COUNT(*) FROM contract")
+    for result in cursor:
+        numberOfContract =result[0]
+    contract_id = 200000 + numberOfContract
+    g.conn.execute("INSERT INTO contract (contract_id, sign_date, start_date, end_date, bo_block_lot, unit, sign_by_tenant,"
+                    "sign_by_landlord, draft_agency, report_year ) values (" + str(contract_id) +
+                   ", '2021-01-31', '2021-02-01', '2022-01-31', '1-01271-7501', " + str(random.randint(100, 999)) +
+                    ", '010-22-3333', '010-22-4333', '010-22-5333', '2019')")
+
+    return redirect('/Agency/' + ssn)
 
 
 @app.route('/<identity>/<ssn>')

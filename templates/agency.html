@@ -16,7 +16,7 @@
     {% endfor %}
   </div>
 
-    <form method="POST" action="/initialize">
+    <form method="POST" action="/draft">
     <h2>Contracts</h2>
   <select name="contract">
     {% for n in contractinfo %}
@@ -24,11 +24,11 @@
     {% endfor %}
   </select>
 
-{#    <p>year: <input type="text" name="year"></p>#}
-{#    <p>month: <input type="text" name="month"></p>#}
-{#    <p>amount: <input type="text" name="amount"></p>#}
-{#    <p>Initialize a bill: <input type="submit" value="Initialize"></p>#}
-{#    </form>#}
+    <p>tenant_ssn: <input type="text" name="tenant"></p>
+    <p>landlord_ssn: <input type="text" name="landlord"></p>
+    <p>bo_block_lot: <input type="text" name="bo_block_lot"></p>
+    <p>Draft a contract: <input type="submit" value="Draft"></p>
+    </form>
 
 {#  <h2>Unpaid Bills</h2>#}
 {#      <select name="unpaid">#}
