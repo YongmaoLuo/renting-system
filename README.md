@@ -1,5 +1,26 @@
 # renting-system
 
+# PostgreSQL Account
+zw2771
+
+
+# URL of your web application
+
+
+# Description of Application
+1. Parts Implemented:
+  - Customers, both tenants and landlords, are able to see their houses.
+  - It functions as a prototype of payment system: tenants can pay for the bill and landlords can initilaze new bills.
+  - Visualiztions are added so customers will have a better view on the current prices of housing over New York.
+
+2. Parts Unimplemented:
+  - Nothing
+
+3. New Features:
+  - The agents are able to draft new contracts for tenants and landlords.
+
+
+
 ## login
 ![login.png](pictures/login.png)
 
