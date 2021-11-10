@@ -1,13 +1,13 @@
-### Renting-system
+# Renting-system
 
-# PostgreSQL Account
+## PostgreSQL Account
 zw2771
 
 
-# URL of your web application
+## URL of your web application
 
 
-# Description of Application
+## Description of Application
 1. Parts Implemented:
   - Customers, both tenants and landlords, are able to see their houses.
   - It functions as a prototype of payment system: tenants can pay for the bill and landlords can initilaze new bills.
@@ -40,7 +40,7 @@ nothing. Only after you type in the right user
  information, the system will jump to different
 page according to the identity you are.
 
-# Tenant
+## Tenant
 ![tenant.png](pictures/tenant.png)
 
 In the tenant page, it shows the identity and 
@@ -67,7 +67,7 @@ disappear from the unpaid bills section and appear
 in the Paid Bills section.
 ![img.png](pictures/tenant_unpaid.png)
 
-#Landlord
+## Landlord
 ![img.png](pictures/landlord.png)
 
 When you log in as a landlord, the page also 
