@@ -4,8 +4,9 @@
 zw2771
 
 
-## URL of the Web Application
+## URL of the Web Application (expired)
 http://34.138.154.131:8111
+We used to deloy this system on our own server as requirement. After we submitted this as homework, the server stopped thus now we cannot access to this system directly.
 
 
 ## Description of Application
